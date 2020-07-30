@@ -13,12 +13,12 @@ result = session_request.get(login_url)
 tree = html.fromstring(result.text)
 #get the sessions login token
 authenticating_token = list(set(tree.xpath("//input[@name='_token']/@value")))[0]
-print(authenticating_token)
+#print(authenticating_token)
 
 
 #create payload
-payload = {'username': config.username,
-           'password': config.password,
+payload = {'username': username,
+           'password': password,
            '_token':authenticating_token   }
 
 result = session_request.post(
@@ -26,8 +26,8 @@ result = session_request.post(
     data = payload,
     headers = dict(referer = login_url)   
 )
-print(result.ok)
-print(result.status_code)
+#print(result.ok)
+#print(result.status_code)
 
 #builds url and request JSON data from it
 url = "https://abacus.co.ke/live/company/SCOM/charts"
@@ -36,6 +36,7 @@ result = session_request.get(
     headers = dict(referer=url)
 )
 
+#extracting JSON data from HTML
 soup = BeautifulSoup(result.content, 'html.parser')
 script = soup.find('script', text=re.compile('Performance = ({.*?});'))
 json_text = re.search(r'Performance = ({.*?});',script.string, flags=re.DOTALL |re.MULTILINE).group(1)
